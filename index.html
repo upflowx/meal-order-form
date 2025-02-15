@@ -367,13 +367,34 @@
                 grandTotal: `€${grandTotal.toFixed(2)}`
             };
 
-            // Send data to GHL via Webhook
-            fetch('YOUR_GHL_WEBHOOK_URL', {
+            // GHL API Endpoint and Headers
+            const ghlApiUrl = 'https://rest.gohighlevel.com/v1/contacts/';
+            const apiKey = 'YOUR_GHL_API_KEY'; // Replace with your actual API key
+            const locationId = 'YOUR_LOCATION_ID'; // Replace with your actual location ID
+
+            // Send data to GHL via API
+            fetch(ghlApiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Version': '2021-07-28'
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    locationId: locationId,
+                    name: formData.name,
+                    email: formData.email,
+                    phone: formData.phone,
+                    customFields: {
+                        specialRequests: formData.specialRequests,
+                        street: formData.street,
+                        city: formData.city,
+                        country: formData.country,
+                        postcode: formData.postcode,
+                        meal_choices: formData.mealChoices, // Custom field for meal choices
+                        total_amount: formData.grandTotal // Custom field for total amount
+                    }
+                }),
             })
             .then(response => response.json())
             .then(data => {
